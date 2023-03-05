@@ -10,44 +10,47 @@ void drawVariable(int value, int dp, char *label)
   d0 = (value/1000)%10;
   d1 = (value/100)%10;
   d2 = (value/10)%10;
-  d3 = value%10;
-  tmSprite.fillSprite(c2);
-  tmSprite.fillSmoothRoundRect(timerBX-4,timerBY-4,timerWidth-(timerBX*2)+8,timerHeight-(timerBY*2)+8,8,c1,c2);
-  tmSprite.fillSmoothRoundRect(timerBX,timerBY,timerWidth-(timerBX*2), timerHeight-(timerBY*2),8,c2,c1);
+  if (metric == true || wwOn == true){
+      d3 = value%10;}
+  else{
+      d3 = 0;}
+  fmSprite.fillSprite(c2);
+  fmSprite.fillSmoothRoundRect(flowBX-4,flowBY-4,flowWidth-(flowBX*2)+8,flowHeight-(flowBY*2)+8,8,c1,c2);
+  fmSprite.fillSmoothRoundRect(flowBX,flowBY,flowWidth-(flowBX*2), flowHeight-(flowBY*2),8,c2,c1);
 
-  tmSprite.setTextColor(c1,c2);  // Text colour
+  fmSprite.setTextColor(c1,c2);  // Text colour
   //Draws the 4 digit backgrounds
   for(int i=0;i<4;i++){
-    tmSprite.fillRect(timerBX+(5)+(i*62), timerBY+6, 58, 95, TFT_BLACK);
+    fmSprite.fillRect(flowBX+(5)+(i*62), flowBY+6, 58, 95, TFT_BLACK);
    // tmSprite.fillRectHGradient(timerX+(5)+(i*50), timerY+12, 15, 44, grays[2],TFT_BLACK);
     }
     //90 Angled Lines for bottom text
-  tmSprite.drawLine(timerBX+25,timerBY+110,timerBX+25,timerBY+116,c1); //Vert L
-  tmSprite.drawLine(timerBX+25,timerBY+116,timerBX+65,timerBY+116,c1); //Hor L
-  tmSprite.drawLine(timerWidth-timerBX-65,timerBY+116,timerWidth-timerBX-25,timerBY+116,c1); //Hor R
-  tmSprite.drawLine(timerWidth-timerBX-25,timerBY+116,timerWidth-timerBX-25,timerBY+110,c1); //Vert R
+  fmSprite.drawLine(flowBX+25,flowBY+110,flowBX+25,flowBY+116,c1); //Vert L
+  fmSprite.drawLine(flowBX+25,flowBY+116,flowBX+65,flowBY+116,c1); //Hor L
+  fmSprite.drawLine(flowWidth-flowBX-65,flowBY+116,flowWidth-flowBX-25,flowBY+116,c1); //Hor R
+  fmSprite.drawLine(flowWidth-flowBX-25,flowBY+116,flowWidth-flowBX-25,flowBY+110,c1); //Vert R
   //bottom text
-  tmSprite.loadFont(small);
-  tmSprite.setTextColor(c1,c2);
-  tmSprite.drawString(label,timerWidth/2,timerBY+116);
-  tmSprite.setTextColor(c4,c1);
+  fmSprite.loadFont(small);
+  fmSprite.setTextColor(c1,c2);
+  fmSprite.drawString(label,flowWidth/2,flowBY+116);
+  fmSprite.setTextColor(c4,c1);
   //sprite.drawString(String(fps),20,80);
-  tmSprite.setTextColor(c1,c2);
-  tmSprite.unloadFont(); 
+  fmSprite.setTextColor(c1,c2);
+  fmSprite.unloadFont(); 
   //DP
   if (dp > 0){
-    tmSprite.fillSmoothCircle(timerBX+250-(dp*62), (timerHeight)-62, 6, c1, c2);
+    fmSprite.fillSmoothCircle(flowBX+250-(dp*62), (flowHeight)-62, 6, c1, c2);
   }
   //Digits
-  tmSprite.loadFont(large70);
-  tmSprite.setTextColor(c1,TFT_BLACK);
-  tmSprite.drawString(String(d0),timerBX+30,timerBY+55);
-  tmSprite.drawString(String(d1),timerBX+92,timerBY+55);
-  tmSprite.drawString(String(d2),timerBX+154,timerBY+55);
-  tmSprite.drawString(String(d3),timerBX+216,timerBY+55);
-  tmSprite.unloadFont(); 
+  fmSprite.loadFont(large70);
+  fmSprite.setTextColor(c1,TFT_BLACK);
+  fmSprite.drawString(String(d0),flowBX+30,flowBY+55);
+  fmSprite.drawString(String(d1),flowBX+92,flowBY+55);
+  fmSprite.drawString(String(d2),flowBX+154,flowBY+55);
+  fmSprite.drawString(String(d3),flowBX+216,flowBY+55);
+  fmSprite.unloadFont(); 
   //Push to Screen
-  tmSprite.pushSprite(timerX,timerY);
+  fmSprite.pushSprite(flowX,flowY);
 }
 
 void drawControls(const char* stepValues[])
@@ -57,20 +60,17 @@ void drawControls(const char* stepValues[])
   ctSprite.fillSmoothRoundRect(counterBX,counterBY,counterWidth-(counterBX*2), counterHeight-(counterBY*2),8,c2,c1);
   
   ctSprite.loadFont(small);
-  ctSprite.setTextColor(c1,c2);
-  int xpos = 0;
+  ctSprite.setTextColor(BLACK,c2);
+  int midPt = (counterWidth*0.5);
   int ypos = 40;
-  ctSprite.fillTriangle(xpos+23, ypos, xpos+50, ypos-25, xpos+50, ypos+25, c3);
-  ctSprite.drawString(stepValues[0],xpos+32, 100);
-  xpos += 70;
-  ctSprite.fillTriangle(xpos+23, ypos, xpos+50, ypos-25, xpos+50, ypos+25, c3);
-  ctSprite.drawString(stepValues[1],xpos+32, 100);
-  xpos += 80;
-  ctSprite.fillTriangle(xpos+50, ypos, xpos+20, ypos-25, xpos+20, ypos+25, c4);
-  ctSprite.drawString(stepValues[2],xpos+30, 100);
-  xpos += 70;
-  ctSprite.fillTriangle(xpos+50, ypos, xpos+20, ypos-25, xpos+20, ypos+25, c4);
-  ctSprite.drawString(stepValues[3],xpos+30, 100);
+  ctSprite.fillTriangle(midPt-130, ypos, midPt-80, ypos-25, midPt-80, ypos+25, c3);
+  ctSprite.drawString(stepValues[0],midPt-102, ypos+2);
+  ctSprite.fillTriangle(midPt-65, ypos, midPt-15, ypos-25, midPt-15, ypos+25, c3);
+  ctSprite.drawString(stepValues[1],midPt-30, ypos+2);
+  ctSprite.fillTriangle(midPt+65, ypos, midPt+15, ypos-25, midPt+15, ypos+25, c4);
+  ctSprite.drawString(stepValues[2],midPt+30, ypos+2);
+  ctSprite.fillTriangle(midPt+130, ypos, midPt+80, ypos-25, midPt+80, ypos+25, c4);
+  ctSprite.drawString(stepValues[3],midPt+102, ypos+2);
   ctSprite.unloadFont(); 
   
   //Push to Screen
@@ -110,65 +110,100 @@ void checkEditTouch(){
       if (debounce == 0){
          soundBuzzer();
         //ADD OR MINUS  x = [70, 150, 170, 250]
-           if ((y > counterY-20) && (y <= 400)) {
+           if ((y > counterY-20) && (y <= 320)) {
                 if ((x < 70)){
                     if (wwOn == true){
                         ww-=1;}
                     else if (rateOn == true){
-                        appRate-=100;}
-                    else if (tkrOn == true){
-                        tkrSize-=100;}
+                        appRate-=10;}
+                    else if (calOn == true){
+                        metric = true;
+                        writeIntIntoEEPROM(epromAddress[5], 1);
+                        }
                     else if (historyOn == true){
                         eepromIndex -= 1;
                         }
                     else if (hydSettingsOn == true){
-                        hydTrigger-=100;}}
+                        hydTrigger-=100;}
+                    else if (tkrOn == true){
+                        tkrSize-=1;}}
                 else if ((x > 70) && (x < 150)){
                     if (wwOn == true){
                         ww-=0.1;}
                     else if (rateOn == true){
-                        appRate-=10;}
-                    else if (tkrOn == true){
-                        tkrSize-=10;}
+                        appRate-=1;}
+                    else if (calOn == true){
+                        metric = true;
+                        writeIntIntoEEPROM(epromAddress[5], 1);
+                        }
                     else if (historyOn == true){
                         eepromIndex -= 1;
                         }
                     else if (hydSettingsOn == true){
-                        hydTrigger-=10;}}
+                        hydTrigger-=10;}
+                    else if (tkrOn == true){
+                        tkrSize-=0.1;}}
                 else if ((x > 170) && (x < 250)){
                     if (wwOn == true){
                         ww+=0.1;}
                     else if (rateOn == true){
-                        appRate+=10;}
-                    else if (tkrOn == true){
-                        tkrSize+=10;}
+                        appRate+=1;}
+                    else if (calOn == true){
+                        metric = false;
+                        writeIntIntoEEPROM(epromAddress[5], 0);
+                        }
                     else if (historyOn == true){
                         eepromIndex += 1;
                         }
                     else if (hydSettingsOn == true){
-                        hydTrigger+=10;}}
+                        hydTrigger+=10;}
+                    else if (tkrOn == true){
+                        tkrSize+=0.1;}}
                 else if ((x > 250)){
                     if (wwOn == true){
                         ww+=1;}
                     else if (rateOn == true){
-                        appRate+=100;}
-                    else if (tkrOn == true){
-                        tkrSize+=100;}
+                        appRate+=10;}
+                    else if (calOn == true){
+                        metric = false;
+                        writeIntIntoEEPROM(epromAddress[5], 0);
+                        }
                     else if (historyOn == true){
                         eepromIndex += 1;
                         }
                     else if (hydSettingsOn == true){
-                        hydTrigger+=100;}}
+                        hydTrigger+=100;}
+                    else if (tkrOn == true){
+                        tkrSize+=1;}}
               }
+           else if ((y > 320 && y < 400)) // SET TANKER SIZE BUTTON
+              if (calOn == true){
+                  if (tkrOn == false){
+                    tkrOn = true;
+                    //tkrBtn();
+                    }
+                  else{
+                    tkrOn = false;
+                   // tkrBtn();
+                    }
+                  wwOn = false;
+                  rateOn = false;
+                  calOn = false;
+                  historyOn = false;
+                  settingsOn = false;
+                  hydSettingsOn = false;
+                  modeChanged = true;
+              }              
         //BACK OR SAVE
-           if ((y > 400)){
+         if ((y >= 400)){
              if ((x < (hydWidth+hydX))){ //BACK WW
                   if (wwOn == true){
                       ww = tempWW;}
                   else if (rateOn == true){
                       appRate = tempApp;}
-                  else if (tkrOn == true){
-                      tkrSize = tempSize;}
+                  else if (calOn == true){
+                      rateBtn();
+                      }
                   else if (historyOn == true){
                       }
                   else if (settingsOn == true){
@@ -176,12 +211,15 @@ void checkEditTouch(){
                   else if (hydSettingsOn == true){
                       hydTrigger = tempHydTrigger;
                       }
+                  else if (tkrOn == true){
+                      tkrSize = tempSize;}
                   wwOn = false;
                   rateOn = false;
-                  tkrOn = false;
+                  calOn = false;
                   historyOn = false;
                   settingsOn = false;
                   hydSettingsOn = false;
+                  tkrOn = false;
                   modeChanged = true;
                   }
               else if (x > (hydWidth+hydX+20)){ //CONFIRM WW
@@ -193,10 +231,8 @@ void checkEditTouch(){
                       tempApp = appRate;
                       writeIntIntoEEPROM(epromAddress[2], appRate);
                       calcTarget();}
-                  else if (tkrOn == true){
-                      tempSize = tkrSize;
-                      writeIntIntoEEPROM(epromAddress[3], tkrSize);
-                      calcTarget();}
+                  else if (calOn == true){
+                  }
                   else if (historyOn == true){
                       }
                   else if (settingsOn == true){
@@ -205,12 +241,17 @@ void checkEditTouch(){
                       tempHydTrigger = hydTrigger;
                       writeIntIntoEEPROM(epromAddress[4], hydTrigger); //Hyd Trigger
                       }
+                  else if (tkrOn == true){
+                      tempSize = tkrSize;
+                      writeIntIntoEEPROM(epromAddress[3], tkrSize*10);
+                      calcTarget();}
                   wwOn = false;
                   rateOn = false;
-                  tkrOn = false;
+                  calOn = false;
                   historyOn = false;
                   settingsOn = false;
                   hydSettingsOn = false;
+                  tkrOn = false;
                   modeChanged = true;
                 }
               }

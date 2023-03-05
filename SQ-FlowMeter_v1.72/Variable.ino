@@ -10,7 +10,7 @@ void drawVariable(int value, int dp, char *label)
   d0 = (value/1000)%10;
   d1 = (value/100)%10;
   d2 = (value/10)%10;
-  if (metric == true){
+  if (metric == true || ww == true){
       d3 = value%10;}
   else{
       d3 = 0;}
@@ -186,7 +186,13 @@ void checkEditTouch(){
                   else if (rateOn == true){
                       appRate = tempApp;}
                   else if (calOn == true){
+                      calibrateCount=0;
+                      calibrateValue=0;
+                      calibrate=false;
                       rateBtn();
+                      }
+                  else if (historyOn == true){
+                      eepromIndex =0;
                       }
                   wwOn = false;
                   rateOn = false;
@@ -204,14 +210,45 @@ void checkEditTouch(){
                       writeIntIntoEEPROM(epromAddress[1], appRate);
                       calcTarget();}
                   else if (calOn == true){
+                      if(calibrate==false){ //TURN ON CALIBRATE
+                              if(calibrateCount == 0){
+                                  calibrateTime = millis();                        
+                                  }
+                              calibrateCount+=1;
+                              if(calibrateCount>=3){
+                                calibrate=true;
+                                calibrateCount=0;
+                              }
+                              if(millis()-calibrateTime > 4000){
+                                calibrateCount=0;
+                                }
+                              modeChanged = true;
+                              }
+                      else if (calibrate==true && calibrateValue == 0){ //NEXT ANALOG VALUE
+                              analog1 = flowAnalog;
+                              writeIntIntoEEPROM(epromAddress[2], analog1);
+                              calibrateValue+= 1;
+                              }
+                      else{                                             //END CALIBRATION
+                              analog2 = flowAnalog;
+                              writeIntIntoEEPROM(epromAddress[4], analog2);
+                              calibrateValue = 0;
+                              rateBtn();
+                              calibrate= false;
+                              }
                       }
+                      
                   else if (historyOn == true){
                       }
-                  wwOn = false;
-                  rateOn = false;
-                  calOn = false;
-                  historyOn = false;
-                  modeChanged = true;
+                    
+                  //EXIT TO MAIN UNLESS MOVING TO ANALOG 2
+                  if(calibrate==false && calibrateCount==0 && calibrateValue != 1){
+                      wwOn = false;
+                      rateOn = false;
+                      calOn = false;
+                      historyOn = false;
+                      modeChanged = true;
+                      }
                 }
               }
           //DIGIT

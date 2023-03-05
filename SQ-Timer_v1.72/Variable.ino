@@ -10,7 +10,7 @@ void drawVariable(int value, int dp, char *label)
   d0 = (value/1000)%10;
   d1 = (value/100)%10;
   d2 = (value/10)%10;
-  if (metric == true){
+  if (wwOn == true){
       d3 = value%10;}
   else{
       d3 = 0;}
@@ -109,78 +109,133 @@ void checkEditTouch(){
     {
       if (debounce == 0){
          soundBuzzer();
+        //SET VENT DELAY
+           if ((y > flowY) && (y <= flowY+flowHeight)) {
+              if ((x > 4) && (x < 150)){
+                  if (calOn == true){
+                      endDelay = false;
+                      writeIntIntoEEPROM(epromAddress[8], 0);
+                      }
+                  }
+              if ((x > 170) && (x < 316)){
+                  if (calOn == true){
+                    endDelay = true;
+                    writeIntIntoEEPROM(epromAddress[8], 1);
+                  }
+              }
+           }
         //ADD OR MINUS  x = [70, 150, 170, 250]
-           if ((y > counterY-20) && (y <= 400)) {
+           if ((y > counterY-10) && (y <= counterY+90)) {
                 if ((x < 70)){
                     if (wwOn == true){
                         ww-=1;}
                     else if (rateOn == true){
-                      if(metric==true){
                         appRate-=10;}
-                      else{
-                        appRate-=10;} 
-                        }
                     else if (calOn == true){
-                        metric = true;
-                        writeIntIntoEEPROM(epromAddress[6], 1);
+                        if (areaMetric == true){
+                            areaMetric = false;
+                            writeIntIntoEEPROM(epromAddress[6], 0);
+                            }
+                        else{
+                            areaMetric = true;
+                            writeIntIntoEEPROM(epromAddress[6], 1);
+                            }
                         }
                     else if (historyOn == true){
                         eepromIndex -= 1;
                         }
-                        }
+                    else if (hydSettingsOn == true){
+                        hydTrigger-=100;}
+                    else if (tkrOn == true){
+                        tkrSize-=1;}}
                 else if ((x > 70) && (x < 150)){
                     if (wwOn == true){
                         ww-=0.1;}
                     else if (rateOn == true){
-                        if(metric==true){
-                          appRate-=1;}
-                        else{
-                          appRate-=1;} 
-                          }
+                        appRate-=1;}
                     else if (calOn == true){
-                        metric = true;
-                        writeIntIntoEEPROM(epromAddress[6], 1);
+                        if (areaMetric == true){
+                            areaMetric = false;
+                            writeIntIntoEEPROM(epromAddress[6], 0);
+                            }
+                        else{
+                            areaMetric = true;
+                            writeIntIntoEEPROM(epromAddress[6], 1);
+                            }
                         }
                     else if (historyOn == true){
                         eepromIndex -= 1;
                         }
-                        }
+                    else if (hydSettingsOn == true){
+                        hydTrigger-=10;}
+                    else if (tkrOn == true){
+                        tkrSize-=0.1;}}
                 else if ((x > 170) && (x < 250)){
                     if (wwOn == true){
                         ww+=0.1;}
                     else if (rateOn == true){
-                        if(metric==true){
-                          appRate+=1;}
-                        else{
-                          appRate+=1;} 
-                        }
+                        appRate+=1;}
                     else if (calOn == true){
-                        metric = false;
-                        writeIntIntoEEPROM(epromAddress[6], 0);
+                        if (speedMetric == true){
+                            speedMetric = false;
+                            writeIntIntoEEPROM(epromAddress[7], 0);
+                            }
+                        else{
+                            speedMetric = true;
+                            writeIntIntoEEPROM(epromAddress[7], 1);
+                            }
                         }
                     else if (historyOn == true){
                         eepromIndex += 1;
-                        }}
+                        }
+                    else if (hydSettingsOn == true){
+                        hydTrigger+=10;}
+                    else if (tkrOn == true){
+                        tkrSize+=0.1;}}
                 else if ((x > 250)){
                     if (wwOn == true){
                         ww+=1;}
                     else if (rateOn == true){
-                        if(metric==true){
-                          appRate+=10;}
-                        else{
-                          appRate+=10;} 
-                          }
+                        appRate+=10;}
                     else if (calOn == true){
-                        metric = false;
-                        writeIntIntoEEPROM(epromAddress[6], 0);
+                        if (speedMetric == true){
+                            speedMetric = false;
+                            writeIntIntoEEPROM(epromAddress[7], 0);
+                            }
+                        else{
+                            speedMetric = true;
+                            writeIntIntoEEPROM(epromAddress[7], 1);
+                            }
                         }
                     else if (historyOn == true){
                         eepromIndex += 1;
-                        }}
+                        }
+                    else if (hydSettingsOn == true){
+                        hydTrigger+=100;}
+                    else if (tkrOn == true){
+                        tkrSize+=1;}}
               }
+           else if ((y > targetY-10 && y < targetY+70)) // SET TANKER SIZE BUTTON
+              if (calOn == true){
+                  if (tkrOn == false){
+                    tkrOn = true;
+                    //tkrBtn();
+                    }
+                  else{
+                    tkrOn = false;
+                   // tkrBtn();
+                    }
+                  wwOn = false;
+                  rateOn = false;
+                  calOn = false;
+                  historyOn = false;
+                  settingsOn = false;
+                  hydSettingsOn = false;
+                  modeChanged = true;
+              }              
         //BACK OR SAVE
-           if ((y > 400)){
-             if ((x < (hydWidth+hydX))){
+         if ((y > relayY) && (y <= (relayY + relayHeight))){
+             if ((x < (hydWidth+hydX))){ //BACK WW
                   if (wwOn == true){
                       ww = tempWW;}
                   else if (rateOn == true){
@@ -188,29 +243,54 @@ void checkEditTouch(){
                   else if (calOn == true){
                       rateBtn();
                       }
+                  else if (historyOn == true){
+                      }
+                  else if (settingsOn == true){
+                      }
+                  else if (hydSettingsOn == true){
+                      hydTrigger = tempHydTrigger;
+                      }
+                  else if (tkrOn == true){
+                      tkrSize = tempSize;}
                   wwOn = false;
                   rateOn = false;
                   calOn = false;
                   historyOn = false;
+                  settingsOn = false;
+                  hydSettingsOn = false;
+                  tkrOn = false;
                   modeChanged = true;
                   }
-              else if (x > (hydWidth+hydX+20)){
+              else if (x > (hydWidth+hydX+20)){ //CONFIRM WW
                   if (wwOn == true){
                       tempWW = ww;
-                      writeIntIntoEEPROM(epromAddress[0], ww*10);
+                      writeIntIntoEEPROM(epromAddress[1], ww*10);
                       calcTarget();}
                   else if (rateOn == true){
                       tempApp = appRate;
-                      writeIntIntoEEPROM(epromAddress[1], appRate);
+                      writeIntIntoEEPROM(epromAddress[2], appRate);
                       calcTarget();}
                   else if (calOn == true){
-                      }
+                  }
                   else if (historyOn == true){
                       }
+                  else if (settingsOn == true){
+                      }
+                  else if (hydSettingsOn == true){
+                      tempHydTrigger = hydTrigger;
+                      writeIntIntoEEPROM(epromAddress[4], hydTrigger); //Hyd Trigger
+                      }
+                  else if (tkrOn == true){
+                      tempSize = tkrSize;
+                      writeIntIntoEEPROM(epromAddress[3], tkrSize*10);
+                      calcTarget();}
                   wwOn = false;
                   rateOn = false;
                   calOn = false;
                   historyOn = false;
+                  settingsOn = false;
+                  hydSettingsOn = false;
+                  tkrOn = false;
                   modeChanged = true;
                 }
               }

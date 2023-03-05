@@ -1,9 +1,8 @@
+
 void resetCounter(){
   //MOVE ALL ALONG 1
-  int tempHistory[10] = {};
-  memcpy(tempHistory, appHistory, 10);
   for (int i=1; i<10; i++){
-      int tempValue = tempHistory[i-1];
+      int tempValue = appHistory[i-1];
       writeIntIntoEEPROM(historyEprom[i], tempValue);
       appHistory[i] = tempValue;} 
   writeIntIntoEEPROM(historyEprom[0], applied);
@@ -28,16 +27,14 @@ void setAnimation(){
       } 
     }
 
-void drawCounter(float value, char *label)
+void drawCounter(int value, char *label)
 {
   char charBuffer[20]="";
-  int fmtValue;
   if (metric == true){
-    fmtValue = value;
     strcat(charBuffer,label);
     strcat(charBuffer," (m3)");}
   else {
-    fmtValue = (value*220);
+    value = value*220;
     strcat(charBuffer,label);
     strcat(charBuffer," (gal)");}
   int d0;
@@ -46,13 +43,12 @@ void drawCounter(float value, char *label)
   int d3;
   int d4;
   int d5;
-  d0 = (fmtValue/100000)%10;
-  d1 = (fmtValue/10000)%10;
-  d2 = (fmtValue/1000)%10;
-  d3 = (fmtValue/100)%10;
-  d4 = (fmtValue/10)%10;
-  d5 = fmtValue%10;
-  
+  d0 = (value/100000)%10;
+  d1 = (value/10000)%10;
+  d2 = (value/1000)%10;
+  d3 = (value/100)%10;
+  d4 = (value/10)%10;
+  d5 = value%10;
   ctSprite.fillSprite(c2);
   ctSprite.fillSmoothRoundRect(counterBX-4,counterBY-4,counterWidth-(counterBX*2)+8,counterHeight-(counterBY*2)+8,8,c1,c2);
   ctSprite.fillSmoothRoundRect(counterBX,counterBY,counterWidth-(counterBX*2), counterHeight-(counterBY*2),8,c2,c1);
@@ -111,7 +107,7 @@ void drawCounter(float value, char *label)
   ctSprite.drawString(String(d2),counterBX+116,counterBY+29);
   ctSprite.drawString(String(d3),counterBX+149,counterBY+29);
   ctSprite.drawString(String(d4),counterBX+182,counterBY+29);
-  ctSprite.drawString(String(d5),counterBX+215,counterBY+29);
+  ctSprite.drawString(String(d4),counterBX+215,counterBY+29);
   ctSprite.unloadFont(); 
   //Push to Screen
   ctSprite.pushSprite(counterX,counterY);

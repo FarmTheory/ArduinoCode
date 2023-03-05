@@ -1,18 +1,11 @@
 //drawHistory("Field 1", 25);
       //  drawHistoryControls();
 void loadHistory(){
-  if (eepromWrite == 1){
-      for (int i=0; i<10; i++){
-          writeIntIntoEEPROM(historyEprom[i], appHistory[i]); //History = 0
-        }
-      writeIntIntoEEPROM(historyEprom[10], 0);
-    }
   for (int i=0; i<10; i++){
       int value = readIntFromEEPROM(historyEprom[i]);
       appHistory[i] = value;}
   //Serial.println(appHistory);
-  writeIntIntoEEPROM(historyEprom[10], 100);
-  historicTotal =  readIntFromEEPROM(historyEprom[10]);         
+  historicTotal = readIntFromEEPROM(historyEprom[10]);      
   }
 void drawHistory()
 { //h=140w=260
@@ -27,7 +20,7 @@ void drawHistory()
   char histtemp[5]="";
   char *units;
 //  Serial.println(value);
-  if (metric==true){
+  if (areaMetric==true){
       units = "(m3)";
       sprintf(histtemp,"%03d",applied);
       strcat(histBuffer,histtemp);}
@@ -40,7 +33,7 @@ void drawHistory()
   fmSprite.drawString(fmtValue,flowWidth*0.5, flowHeight*0.5);
   fmSprite.unloadFont();
   fmSprite.loadFont(medium30);
-  if (metric == true)
+  if (areaMetric == true)
   fmSprite.drawString(units,flowWidth*0.5, flowHeight*0.8);
   fmSprite.unloadFont();
   fmSprite.pushSprite(flowX,flowY);
@@ -52,9 +45,9 @@ void drawHistoryControls()
   char labelBuffer[20]="";
   char labeltemp[5]="";
 //  Serial.println(value);
-  sprintf(labeltemp,"%01d",fieldNum+1);
+  sprintf(labeltemp,"%01d",fieldNum);
+  strcat(labelBuffer,"Field ");
   strcat(labelBuffer,labeltemp);
-  strcat(labelBuffer,"/10");
   char *fmtValue = labelBuffer;
   ctSprite.fillSprite(c2);
   ctSprite.fillSmoothRoundRect(counterBX-4,counterBY-4,counterWidth-(counterBX*2)+8,counterHeight-(counterBY*2)+8,8,c1,c2);
@@ -84,7 +77,7 @@ void drawHistoricTotal()
   static uint32_t value = historicTotal;
   char *label = "all time";
   char charBuffer[20]="";
-  if (metric == true){
+  if (areaMetric == true){
     strcat(charBuffer,label);
     strcat(charBuffer," (m3)");}
   else {
@@ -111,7 +104,7 @@ void drawHistoricTotal()
   //Digits
   char trgtBuffer[60]="";
   char trgttemp[35]="";
-  if (metric == true){
+  if (areaMetric == true){
       sprintf(trgttemp,"%08d",value);
       strcat(trgtBuffer,trgttemp);}
   else{
@@ -125,4 +118,3 @@ void drawHistoricTotal()
   //Push to Screen
   trgtSprite.pushSprite(targetX,targetY);
   }
-     

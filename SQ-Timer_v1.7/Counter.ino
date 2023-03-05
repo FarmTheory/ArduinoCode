@@ -83,7 +83,7 @@ void drawCounter(float value, char *label)
   //bottom text
   ctSprite.loadFont(small);
   ctSprite.setTextColor(c1,c2);
-  ctSprite.drawString(charBuffer,counterBX+89+48,counterBY+62);
+  ctSprite.drawString(charBuffer,counterBX+89+45,counterBY+62);
   ctSprite.setTextColor(c4,c1);
   //sprite.drawString(String(fps),20,80);
   //HISTORY

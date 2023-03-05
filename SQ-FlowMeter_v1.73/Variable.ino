@@ -10,14 +10,14 @@ void drawVariable(int value, int dp, char *label)
   d0 = (value/1000)%10;
   d1 = (value/100)%10;
   d2 = (value/10)%10;
-  if (metric == true){
+  if (wwOn == true){
       d3 = value%10;}
   else{
       d3 = 0;}
   fmSprite.fillSprite(c2);
   fmSprite.fillSmoothRoundRect(flowBX-4,flowBY-4,flowWidth-(flowBX*2)+8,flowHeight-(flowBY*2)+8,8,c1,c2);
   fmSprite.fillSmoothRoundRect(flowBX,flowBY,flowWidth-(flowBX*2), flowHeight-(flowBY*2),8,c2,c1);
-
+ 
   fmSprite.setTextColor(c1,c2);  // Text colour
   //Draws the 4 digit backgrounds
   for(int i=0;i<4;i++){
@@ -115,14 +115,20 @@ void checkEditTouch(){
                     if (wwOn == true){
                         ww-=1;}
                     else if (rateOn == true){
-                      if(metric==true){
+                      if(areaMetric==true){
                         appRate-=10;}
                       else{
                         appRate-=10;} 
                         }
                     else if (calOn == true){
-                        metric = true;
-                        writeIntIntoEEPROM(epromAddress[6], 1);
+                        if (areaMetric == true){
+                            areaMetric = false;
+                            writeIntIntoEEPROM(epromAddress[6], 0);
+                            }
+                        else{
+                            areaMetric = true;
+                            writeIntIntoEEPROM(epromAddress[6], 1);
+                            }
                         }
                     else if (historyOn == true){
                         eepromIndex -= 1;
@@ -132,14 +138,20 @@ void checkEditTouch(){
                     if (wwOn == true){
                         ww-=0.1;}
                     else if (rateOn == true){
-                        if(metric==true){
+                        if(areaMetric==true){
                           appRate-=1;}
                         else{
                           appRate-=1;} 
                           }
                     else if (calOn == true){
-                        metric = true;
-                        writeIntIntoEEPROM(epromAddress[6], 1);
+                        if (areaMetric == true){
+                            areaMetric = false;
+                            writeIntIntoEEPROM(epromAddress[6], 0);
+                            }
+                        else{
+                            areaMetric = true;
+                            writeIntIntoEEPROM(epromAddress[6], 1);
+                            }
                         }
                     else if (historyOn == true){
                         eepromIndex -= 1;
@@ -149,14 +161,20 @@ void checkEditTouch(){
                     if (wwOn == true){
                         ww+=0.1;}
                     else if (rateOn == true){
-                        if(metric==true){
+                        if(areaMetric==true){
                           appRate+=1;}
                         else{
                           appRate+=1;} 
                         }
                     else if (calOn == true){
-                        metric = false;
-                        writeIntIntoEEPROM(epromAddress[6], 0);
+                        if (speedMetric == true){
+                            speedMetric = false;
+                            writeIntIntoEEPROM(epromAddress[7], 0);
+                            }
+                        else{
+                            speedMetric = true;
+                            writeIntIntoEEPROM(epromAddress[7], 1);
+                            }
                         }
                     else if (historyOn == true){
                         eepromIndex += 1;
@@ -165,14 +183,20 @@ void checkEditTouch(){
                     if (wwOn == true){
                         ww+=1;}
                     else if (rateOn == true){
-                        if(metric==true){
+                        if(areaMetric==true){
                           appRate+=10;}
                         else{
                           appRate+=10;} 
                           }
                     else if (calOn == true){
-                        metric = false;
-                        writeIntIntoEEPROM(epromAddress[6], 0);
+                        if (speedMetric == true){
+                            speedMetric = false;
+                            writeIntIntoEEPROM(epromAddress[7], 0);
+                            }
+                        else{
+                            speedMetric = true;
+                            writeIntIntoEEPROM(epromAddress[7], 1);
+                            }
                         }
                     else if (historyOn == true){
                         eepromIndex += 1;
@@ -186,7 +210,13 @@ void checkEditTouch(){
                   else if (rateOn == true){
                       appRate = tempApp;}
                   else if (calOn == true){
+                      calibrateCount=0;
+                      calibrateValue=0;
+                      calibrate=false;
                       rateBtn();
+                      }
+                  else if (historyOn == true){
+                      eepromIndex =0;
                       }
                   wwOn = false;
                   rateOn = false;
@@ -204,14 +234,45 @@ void checkEditTouch(){
                       writeIntIntoEEPROM(epromAddress[1], appRate);
                       calcTarget();}
                   else if (calOn == true){
+                      if(calibrate==false){ //TURN ON CALIBRATE
+                              if(calibrateCount == 0){
+                                  calibrateTime = millis();                        
+                                  }
+                              calibrateCount+=1;
+                              if(calibrateCount>=3){
+                                calibrate=true;
+                                calibrateCount=0;
+                              }
+                              if(millis()-calibrateTime > 4000){
+                                calibrateCount=0;
+                                }
+                              modeChanged = true;
+                              }
+                      else if (calibrate==true && calibrateValue == 0){ //NEXT ANALOG VALUE
+                              analog1 = flowAnalog;
+                              writeIntIntoEEPROM(epromAddress[2], analog1);
+                              calibrateValue+= 1;
+                              }
+                      else{                                             //END CALIBRATION
+                              analog2 = flowAnalog;
+                              writeIntIntoEEPROM(epromAddress[4], analog2);
+                              calibrateValue = 0;
+                              rateBtn();
+                              calibrate= false;
+                              }
                       }
+                      
                   else if (historyOn == true){
                       }
-                  wwOn = false;
-                  rateOn = false;
-                  calOn = false;
-                  historyOn = false;
-                  modeChanged = true;
+                    
+                  //EXIT TO MAIN UNLESS MOVING TO ANALOG 2
+                  if(calibrate==false && calibrateCount==0 && calibrateValue != 1){
+                      wwOn = false;
+                      rateOn = false;
+                      calOn = false;
+                      historyOn = false;
+                      modeChanged = true;
+                      }
                 }
               }
           //DIGIT

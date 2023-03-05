@@ -11,8 +11,7 @@ void loadHistory(){
       int value = readIntFromEEPROM(historyEprom[i]);
       appHistory[i] = value;}
   //Serial.println(appHistory);
-  writeIntIntoEEPROM(historyEprom[10], 100);
-  historicTotal =  readIntFromEEPROM(historyEprom[10]);         
+  writeIntIntoEEPROM(historyEprom[10], historicTotal);       
   }
 void drawHistory()
 { //h=140w=260

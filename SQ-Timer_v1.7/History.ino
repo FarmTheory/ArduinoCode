@@ -1,18 +1,11 @@
 //drawHistory("Field 1", 25);
       //  drawHistoryControls();
 void loadHistory(){
-  if (eepromWrite == 1){
-      for (int i=0; i<10; i++){
-          writeIntIntoEEPROM(historyEprom[i], appHistory[i]); //History = 0
-        }
-      writeIntIntoEEPROM(historyEprom[10], 0);
-    }
   for (int i=0; i<10; i++){
       int value = readIntFromEEPROM(historyEprom[i]);
       appHistory[i] = value;}
   //Serial.println(appHistory);
-  writeIntIntoEEPROM(historyEprom[10], 100);
-  historicTotal =  readIntFromEEPROM(historyEprom[10]);         
+  historicTotal = readIntFromEEPROM(historyEprom[10]);      
   }
 void drawHistory()
 { //h=140w=260
@@ -52,9 +45,9 @@ void drawHistoryControls()
   char labelBuffer[20]="";
   char labeltemp[5]="";
 //  Serial.println(value);
-  sprintf(labeltemp,"%01d",fieldNum+1);
+  sprintf(labeltemp,"%01d",fieldNum);
+  strcat(labelBuffer,"Field ");
   strcat(labelBuffer,labeltemp);
-  strcat(labelBuffer,"/10");
   char *fmtValue = labelBuffer;
   ctSprite.fillSprite(c2);
   ctSprite.fillSmoothRoundRect(counterBX-4,counterBY-4,counterWidth-(counterBX*2)+8,counterHeight-(counterBY*2)+8,8,c1,c2);
@@ -125,4 +118,3 @@ void drawHistoricTotal()
   //Push to Screen
   trgtSprite.pushSprite(targetX,targetY);
   }
-     

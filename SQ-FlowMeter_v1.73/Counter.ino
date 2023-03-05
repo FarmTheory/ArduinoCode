@@ -1,3 +1,4 @@
+
 void resetCounter(){
   //MOVE ALL ALONG 1
   int tempHistory[10] = {};
@@ -13,8 +14,6 @@ void resetCounter(){
   applied = 0;
   drawCounter(applied, "applied");
   drawHistoricTotal();
-  Serial.print("HISTORIC");
-  Serial.println(historicTotal);
 }
 
 void setAnimation(){
@@ -32,7 +31,7 @@ void drawCounter(float value, char *label)
 {
   char charBuffer[20]="";
   int fmtValue;
-  if (metric == true){
+  if (areaMetric == true){
     fmtValue = value;
     strcat(charBuffer,label);
     strcat(charBuffer," (m3)");}
@@ -98,10 +97,6 @@ void drawCounter(float value, char *label)
   ctSprite.setTextColor(c1,c2);
   ctSprite.drawString("RESET",counterBX+148+36+36+30,counterBY+58);
   ctSprite.unloadFont(); 
-  //DP
-  if (metric == true){
-      //ctSprite.fillSmoothCircle(counterBX+159, (counterHeight/2)+5, 3, c1, c2);
-      }
 
   //Digits
   ctSprite.loadFont(digits);

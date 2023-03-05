@@ -1,3 +1,4 @@
+
 void resetCounter(){
   //MOVE ALL ALONG 1
   int tempHistory[10] = {};

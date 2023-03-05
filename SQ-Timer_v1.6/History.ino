@@ -1,18 +1,11 @@
 //drawHistory("Field 1", 25);
       //  drawHistoryControls();
 void loadHistory(){
-  if (eepromWrite == 1){
-      for (int i=0; i<10; i++){
-          writeIntIntoEEPROM(historyEprom[i], appHistory[i]); //History = 0
-        }
-      writeIntIntoEEPROM(historyEprom[10], 0);
-    }
   for (int i=0; i<10; i++){
       int value = readIntFromEEPROM(historyEprom[i]);
       appHistory[i] = value;}
   //Serial.println(appHistory);
-  writeIntIntoEEPROM(historyEprom[10], 100);
-  historicTotal =  readIntFromEEPROM(historyEprom[10]);         
+  historicTotal = readIntFromEEPROM(historyEprom[10]);      
   }
 void drawHistory()
 { //h=140w=260
